@@ -1,0 +1,27 @@
+tmp
+target
+dist
+out
+logs
+.sass-cache
+.cache
+RUNNING_PID
+.bundle
+node_modules
+
+# idea
+.idea_modules
+.classpath
+.project
+.settings
+.history
+.idea
+*.iml
+
+# Mac
+.DS_Store
+
+# emacs
+*~
+
+get_files
