@@ -1,5 +1,6 @@
 package net.astail
 
+import com.typesafe.config.ConfigFactory
 import org.openqa.selenium.chrome.ChromeDriver
 
 import scala.util.{Failure, Success, Try}
@@ -9,6 +10,7 @@ object selenium {
   def jinjer(x: String, slackUserUid: String, separator: String): Option[String] = {
 
     val data = models.Jinjer.findByUid(slackUserUid)
+    val chromedriverDir = ConfigFactory.load.getString("chromedriver_dir")
 
     if (data.isDefined) {
       val (companyId, uid, pass) = (data.get.companyId, data.get.uid, data.get.pass)
@@ -17,7 +19,7 @@ object selenium {
       val result = dPass match {
         case Some(p) => {
 
-          System.setProperty("webdriver.chrome.driver", "/Users/astel/Desktop/chromedriver80")
+          System.setProperty("webdriver.chrome.driver", chromedriverDir)
           val driver = new ChromeDriver()
 
           driver.get("https://kintai.jinjer.biz/sign_in")
