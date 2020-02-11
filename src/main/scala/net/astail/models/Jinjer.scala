@@ -27,13 +27,14 @@ object Jinjer extends SkinnyNoIdCRUDMapper[Jinjer] {
     )
   }
 
-  def update(slackUserUid: String, companyId: String, uid: String, pass: String )(implicit session: DBSession = autoSession) = {
+  def update(slackUserUid: String, companyId: String, uid: String, pass: String)(implicit session: DBSession = autoSession) = {
     Jinjer.updateBy(sqls.eq(Jinjer.column.slackUserUid, slackUserUid)).withNamedValues(
       column.companyId -> companyId,
       column.uid -> uid,
       column.pass -> pass
     )
   }
+
   def findByUid(slackUserUid: String)(implicit session: DBSession = autoSession): Option[Jinjer] = {
     findBy(sqls.eq(defaultAlias.slackUserUid, slackUserUid))
   }
