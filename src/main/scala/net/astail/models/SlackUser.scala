@@ -32,4 +32,8 @@ object SlackUser extends SkinnyNoIdCRUDMapper[SlackUser] {
   def findByUid(uid: String)(implicit session: DBSession = autoSession): Option[SlackUser] = {
     findBy(sqls.eq(defaultAlias.uid, uid))
   }
+
+  def deleteByUid(uid: String)(implicit session: DBSession = autoSession) = {
+    SlackUser.deleteBy(sqls.eq(SlackUser.column.uid, uid)) & Jinjer.deleteBy(sqls.eq(Jinjer.column.slackUserUid, uid))
+  }
 }

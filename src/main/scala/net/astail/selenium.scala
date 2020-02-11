@@ -8,10 +8,8 @@ object selenium {
 
   def jinjer(x: String, slackUserUid: String, separator: String): String = {
 
-
     val data = models.Jinjer.findByUid(slackUserUid)
     val (companyId, uid, pass) = (data.get.companyId, data.get.uid, data.get.pass)
-
     val dPass = crypto.decryptString(pass, separator)
 
     dPass match {
@@ -37,12 +35,8 @@ object selenium {
 
         Thread.sleep(5000)
 
-
-        val css: String = if (x == "出社！")
-          "#container > section > main > div.group.groupTimeBtn.cf > div.stampBtn.mt20.cf > ul > li:nth-child(1) > button"
-        else if (x == "退社！")
-          "#container > section > main > div.group.groupTimeBtn.cf > div.stampBtn.mt20.cf > ul > li:nth-child(2) > button"
-        else ""
+        //li:nth-child(1)が出社ボタン、li:nth-child(2)が退社ボタン
+        val css: String = s"#container > section > main > div.group.groupTimeBtn.cf > div.stampBtn.mt20.cf > ul > li:nth-child($x) > button"
 
         val t = Try {
           driver.findElementByCssSelector(css).click()
