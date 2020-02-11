@@ -29,15 +29,16 @@ object Main {
 
       logger.info(s"[getMessage] channel: ${channel}, text: ${text}, user: ${slackUserUid}")
 
-      val sendMessage = text match {
-        case e if e startsWith "登録" => rdbData.subscribe(e, channel, slackUserUid, separator)
-        case "削除" => rdbData.deleteUserData(slackUserUid)
+      val sendMessage: Option[String] = text match {
+        case e if e startsWith "登録" => Some(rdbData.subscribe(e, channel, slackUserUid, separator))
+        case "削除" => Some(rdbData.deleteUserData(slackUserUid))
         case "出社！" => selenium.jinjer("1", slackUserUid, separator)
         case "退社！" => selenium.jinjer("2", slackUserUid, separator)
       }
 
-      client.sendMessage(channel, sendMessage)
-      logger.info(s"[sendMessage] channel: ${channel}, sendMessage: ${sendMessage}")
+      if (sendMessage.isDefined) client.sendMessage(channel, sendMessage.get)
+
+      logger.info(s"[sendMessage] channel: ${channel}, sendMessage: ${sendMessage.getOrElse("None")}")
     }
   }
 }
