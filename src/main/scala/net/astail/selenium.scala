@@ -6,45 +6,57 @@ import scala.util.{Failure, Success, Try}
 
 object selenium {
 
-  def jinjer(x: String): String = {
-
-    System.setProperty("webdriver.chrome.driver", "/Users/astel/Desktop/chromedriver80")
-    val driver = new ChromeDriver()
-
-    driver.get("https://kintai.jinjer.biz/sign_in")
-
-    val id = driver.findElementById("company_code")
-    id.sendKeys("xx")
-
-    val mail = driver.findElementByName("email")
-    mail.sendKeys("xxx")
-
-    val password = driver.findElementByName("password")
-    password.sendKeys("xxx")
+  def jinjer(x: String, slackUserUid: String, separator: String): String = {
 
 
-    val loginButton = driver.findElementById("jbtn-login-staff")
-    loginButton.click()
+    val data = models.Jinjer.findByUid(slackUserUid)
+    val (companyId, uid, pass) = (data.get.companyId, data.get.uid, data.get.pass)
 
-    Thread.sleep(5000)
+    val dPass = crypto.decryptString(pass, separator)
+
+    dPass match {
+      case Some(p) => {
+
+        System.setProperty("webdriver.chrome.driver", "/Users/astel/Desktop/chromedriver80")
+        val driver = new ChromeDriver()
+
+        driver.get("https://kintai.jinjer.biz/sign_in")
+
+        val id = driver.findElementById("company_code")
+        id.sendKeys(companyId)
+
+        val mail = driver.findElementByName("email")
+        mail.sendKeys(uid)
+
+        val password = driver.findElementByName("password")
+        password.sendKeys(p)
 
 
-    val css: String = if (x == "出社！")
-      "#container > section > main > div.group.groupTimeBtn.cf > div.stampBtn.mt20.cf > ul > li:nth-child(1) > button"
-    else if (x == "退社！")
-      "#container > section > main > div.group.groupTimeBtn.cf > div.stampBtn.mt20.cf > ul > li:nth-child(2) > button"
-    else ""
+        val loginButton = driver.findElementById("jbtn-login-staff")
+        loginButton.click()
 
-    val t = Try {
-      driver.findElementByCssSelector(css).click()
-    }
+        Thread.sleep(5000)
 
-    driver.close()
-    driver.quit()
 
-    t match {
-      case Success(x) => "成功です"
-      case Failure(_) => "既に出社済みか失敗です"
+        val css: String = if (x == "出社！")
+          "#container > section > main > div.group.groupTimeBtn.cf > div.stampBtn.mt20.cf > ul > li:nth-child(1) > button"
+        else if (x == "退社！")
+          "#container > section > main > div.group.groupTimeBtn.cf > div.stampBtn.mt20.cf > ul > li:nth-child(2) > button"
+        else ""
+
+        val t = Try {
+          driver.findElementByCssSelector(css).click()
+        }
+
+        driver.close()
+        driver.quit()
+
+        t match {
+          case Success(x) => "成功です"
+          case Failure(_) => "既に出社済みか失敗です"
+        }
+      }
+      case None => "復号化失敗しました"
     }
   }
 }

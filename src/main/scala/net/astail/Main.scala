@@ -8,12 +8,14 @@ import scala.util.{Failure, Success, Try}
 
 object Main {
   def main(args: Array[String]): Unit = {
+
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
     skinny.DBSettings.initialize()
 
     logger.info("start app")
 
     val token = ConfigFactory.load.getString("slack_jinium_token")
+    val separator = "eriohaorenoyome"
 
     implicit val system = ActorSystem("slack")
     implicit val ec = system.dispatcher
@@ -38,14 +40,19 @@ object Main {
           val checkSlackUser = models.SlackUser.findByUid(slackUserUid)
           val checkJinjer = models.Jinjer.findByUid(slackUserUid)
 
+          val (companyId, uid, pass) = (saveData(1), saveData(2), saveData(3))
+
+          val ePass = crypto.encryptString(pass, separator)
+
+
           (checkSlackUser, checkJinjer) match {
             case (Some(x), Some(y)) =>
-              val t = models.Jinjer.update(slackUserUid, saveData(1), saveData(2), saveData(3))
+              val t = models.Jinjer.update(slackUserUid, companyId, uid, ePass)
               val b = if (int2bool(t)) "更新成功" else "更新失敗"
               "既にデータがあったので上書き処理しました " + b
             case (Some(x), None) =>
               val t = Try {
-                models.Jinjer.create(slackUserUid, saveData(1), saveData(2), saveData(3))
+                models.Jinjer.create(slackUserUid, companyId, uid, ePass)
               }
               t match {
                 case Success(x) => "jinjerのデータを登録しました"
@@ -54,7 +61,7 @@ object Main {
             case (None, None) =>
               val t = Try {
                 models.SlackUser.create(slackUserUid, channel)
-                models.Jinjer.create(slackUserUid, saveData(1), saveData(2), saveData(3))
+                models.Jinjer.create(slackUserUid,companyId, uid, ePass)
               }
               t match {
                 case Success(x) => "データを登録しました"
@@ -63,8 +70,8 @@ object Main {
           }
 
         }
-        case "出社！" => selenium.jinjer("出社！")
-        case "退社！" => selenium.jinjer("退社！")
+        case "出社！" => selenium.jinjer("出社！",slackUserUid, separator)
+        case "退社！" => selenium.jinjer("退社！",slackUserUid, separator)
       }
 
       client.sendMessage(channel, sendMessage)
