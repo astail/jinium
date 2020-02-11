@@ -10,7 +10,6 @@ object rdbData {
     val tmp = m.replaceAll("\u3000", " ")
     val saveData = tmp split "[ ]"
 
-
     if (saveData.length == 4) {
       val checkSlackUser = models.SlackUser.findByUid(slackUserUid)
       val checkJinjer = models.Jinjer.findByUid(slackUserUid)
@@ -30,8 +29,8 @@ object rdbData {
             models.Jinjer.create(slackUserUid, companyId, uid, ePass)
           }
           t match {
-            case Success(x) => "user,jinjer登録しました"
-            case Failure(_) => "user,jinjer登録失敗"
+            case Success(x) => "データ登録しました"
+            case Failure(_) => "データ登録失敗"
           }
         case (_, _) => "データが壊れている可能性があります"
       }
@@ -41,5 +40,18 @@ object rdbData {
   def deleteUserData(slackUserUid: String) = {
     val t = models.SlackUser.deleteByUid(slackUserUid)
     if (int2bool(t)) "削除成功" else "削除失敗"
+  }
+
+  def selectUserData(slackUserUid: String) = {
+    val r = models.SlackUser.findByUid(slackUserUid)
+
+    r match {
+      case Some(x) =>
+        x.jinjer match {
+          case Some(j) => s"uid: ${x.uid}, channel: ${x.channel}, companyId: ${j.companyId}, uid: ${j.uid}"
+          case None => s"uid: ${x.uid}, channel: ${x.channel}"
+        }
+      case None => "データはありませんでした"
+    }
   }
 }

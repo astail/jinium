@@ -1,7 +1,6 @@
 package net.astail.models
 
 import scalikejdbc.{DBSession, WrappedResultSet, autoConstruct}
-import skinny.orm.feature.associations.HasOneAssociation
 import skinny.orm.{Alias, SkinnyNoIdCRUDMapper}
 import scalikejdbc._
 
@@ -24,13 +23,15 @@ object SlackUser extends SkinnyNoIdCRUDMapper[SlackUser] {
       column.channel -> channel)
   }
 
-  lazy val jinjerRef: HasOneAssociation[SlackUser] = hasOne[Jinjer](
+  lazy val jinjerRef = belongsToWithFkAndJoinCondition[Jinjer](
     right = Jinjer,
+    fk = "uid",
+    on = sqls.eq(defaultAlias.uid, Jinjer.defaultAlias.slackUserUid),
     merge = (sl, jin) => sl.copy(jinjer = jin)
   )
 
   def findByUid(uid: String)(implicit session: DBSession = autoSession): Option[SlackUser] = {
-    findBy(sqls.eq(defaultAlias.uid, uid))
+    SlackUser.joins(jinjerRef).findBy(sqls.eq(defaultAlias.uid, uid))
   }
 
   def deleteByUid(uid: String)(implicit session: DBSession = autoSession) = {
