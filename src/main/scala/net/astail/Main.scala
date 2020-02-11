@@ -35,6 +35,13 @@ object Main {
         case "削除" => Some(rdbData.deleteUserData(slackUserUid))
         case "出社！" => selenium.jinjer("1", slackUserUid, separator)
         case "退社！" => selenium.jinjer("2", slackUserUid, separator)
+        case e if e contains "help" => Some(
+          """登録: 自分のデータを登録します / 引数 <companyId> <uid> <pass>
+             確認: 自分のデータを確認します パスワード以外が表示されます
+             出社！: 登録しているデータで出社処理をします
+             退社！: 登録しているデータで退社処理をします
+          """
+        )
       }
 
       if (sendMessage.isDefined) client.sendMessage(channel, s"<@$slackUserUid> ${sendMessage.get}")
