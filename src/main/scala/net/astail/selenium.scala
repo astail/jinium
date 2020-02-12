@@ -50,8 +50,8 @@ object selenium {
           driver.quit()
 
           t match {
-            case Success(x) => "成功です"
-            case Failure(_) => "既に出社済みか失敗です"
+            case Success(x) => "(ボタンを押すことには)成功です"
+            case Failure(_) => "既に出社済みか退社済みか失敗です"
           }
         }
         case None => "復号化失敗しました"
