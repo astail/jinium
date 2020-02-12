@@ -43,6 +43,7 @@ object Main {
              退社！: 登録しているデータで退社処理をします
           """
         )
+        case _ => None
       }
 
       if (sendMessage.isDefined) client.sendMessage(channel, s"<@$slackUserUid> ${sendMessage.get}")
