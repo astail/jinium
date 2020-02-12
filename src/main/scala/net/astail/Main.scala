@@ -30,7 +30,7 @@ object Main {
       logger.info(s"[getMessage] channel: ${channel}, text: ${text}, user: ${slackUserUid}")
 
       val sendMessage: Option[String] = text match {
-        case e if e startsWith "登録" => Some(rdbData.subscribe(e, channel, slackUserUid, separator))
+        case e if e startsWith "登録" => Some(rdbData.subscribe(e, slackUserUid, separator))
         case "確認" => Some(rdbData.selectUserData(slackUserUid))
         case "削除" => Some(rdbData.deleteUserData(slackUserUid))
         case "出社！" => selenium.jinjer("1", slackUserUid, separator)

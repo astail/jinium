@@ -6,7 +6,6 @@ import scalikejdbc._
 
 case class SlackUser(
   uid: String,
-  channel: String,
   jinjer: Option[Jinjer] = None
 )
 
@@ -17,10 +16,10 @@ object SlackUser extends SkinnyNoIdCRUDMapper[SlackUser] {
   override def extract(rs: WrappedResultSet, n: scalikejdbc.ResultName[SlackUser]): SlackUser =
     autoConstruct(rs, n, "jinjer")
 
-  def create(uid: String, channel: String)(implicit session: DBSession = autoSession) = {
+  def create(uid: String)(implicit session: DBSession = autoSession) = {
     SlackUser.createWithNamedValues(
-      column.uid -> uid,
-      column.channel -> channel)
+      column.uid -> uid
+    )
   }
 
   lazy val jinjerRef = belongsToWithFkAndJoinCondition[Jinjer](

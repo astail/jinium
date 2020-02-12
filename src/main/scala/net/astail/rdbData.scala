@@ -6,7 +6,7 @@ object rdbData {
 
   def int2bool(i: Int) = if (i == 1) true else false
 
-  def subscribe(m: String, channel: String, slackUserUid: String, separator: String): String = {
+  def subscribe(m: String, slackUserUid: String, separator: String): String = {
     val tmp = m.replaceAll("\u3000", " ")
     val saveData = tmp split "[ ]"
 
@@ -25,7 +25,7 @@ object rdbData {
           "既にデータがあったので上書き処理しました " + result
         case (None, None) =>
           val t = Try {
-            models.SlackUser.create(slackUserUid, channel)
+            models.SlackUser.create(slackUserUid)
             models.Jinjer.create(slackUserUid, companyId, uid, ePass)
           }
           t match {
@@ -48,8 +48,8 @@ object rdbData {
     r match {
       case Some(x) =>
         x.jinjer match {
-          case Some(j) => s"uid: ${x.uid}, channel: ${x.channel}, companyId: ${j.companyId}, uid: ${j.uid}"
-          case None => s"uid: ${x.uid}, channel: ${x.channel}"
+          case Some(j) => s"uid: ${x.uid}, companyId: ${j.companyId}, uid: ${j.uid}"
+          case None => s"uid: ${x.uid}"
         }
       case None => "データはありませんでした"
     }

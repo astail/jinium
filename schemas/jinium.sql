@@ -3,7 +3,6 @@ CREATE DATABASE IF NOT EXISTS `jinium` DEFAULT CHARSET utf8mb4;
 DROP TABLE IF EXISTS `slack_users`;
 CREATE TABLE `slack_users` (
   `uid` char(10) NOT NULL,
-  `channel` varchar(100) NOT NULL,
   UNIQUE KEY `idx_uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
