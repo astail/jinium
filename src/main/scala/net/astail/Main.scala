@@ -36,7 +36,7 @@ object Main {
         case "出社！" => selenium.jinjer("1", slackUserUid, separator)
         case "退社！" => selenium.jinjer("2", slackUserUid, separator)
         case e if e contains "help" => Some(
-          """登録: 自分のデータを登録します / 引数 <companyId> <uid> <pass>
+          """登録: 自分のデータを登録します(botとDMでやってください) / 引数 <companyId> <uid> <pass>
              　　　既にデータがあった場合、上書き処理をします
              確認: 自分のデータを確認します パスワード以外が表示されます
              出社！: 登録しているデータで出社処理をします
