@@ -33,8 +33,8 @@ object Main {
         case e if e startsWith "登録" => Some(rdbData.subscribe(e, slackUserUid, separator))
         case "確認" => Some(rdbData.selectUserData(slackUserUid))
         case "削除" => Some(rdbData.deleteUserData(slackUserUid))
-        case "出社！" => selenium.jinjer("1", slackUserUid, separator)
-        case "退社！" => selenium.jinjer("2", slackUserUid, separator)
+        case "仕事開始！" | "出勤！" | "出社！" | ":startwork:" | "開店" | "始業" => selenium.jinjer("1", slackUserUid, separator)
+        case "仕事終了！" | "退勤！" | "退社！" | ":endwork:" | "閉店" | "終業" | "終わり" | "帰る" => selenium.jinjer("2", slackUserUid, separator)
         case e if e contains "help" => Some(
           """登録: 自分のデータを登録します(botとDMでやってください) / 引数 <companyId> <uid> <pass>
              　　　既にデータがあった場合、上書き処理をします
