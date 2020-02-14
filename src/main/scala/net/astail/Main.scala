@@ -28,19 +28,21 @@ object Main {
       val slackUserUid: String = message.user
 
       logger.info(s"[getMessage] channel: ${channel}, text: ${text}, user: ${slackUserUid}")
+      val startM = Seq("仕事開始！", "出勤！", "出社！", ":startwork:", "開店", "始業")
+      val endM = Seq("仕事終了！", "退勤！", "退社！", ":endwork:", "閉店", "終業", "終わり", "帰る")
 
       val sendMessage: Option[String] = text match {
         case e if e startsWith "登録" => Some(rdbData.subscribe(e, slackUserUid, separator))
         case "確認" => Some(rdbData.selectUserData(slackUserUid))
         case "削除" => Some(rdbData.deleteUserData(slackUserUid))
-        case "仕事開始！" | "出勤！" | "出社！" | ":startwork:" | "開店" | "始業" => selenium.jinjer("1", slackUserUid, separator)
-        case "仕事終了！" | "退勤！" | "退社！" | ":endwork:" | "閉店" | "終業" | "終わり" | "帰る" => selenium.jinjer("2", slackUserUid, separator)
+        case t if startM.exists(t.contains(_)) => selenium.jinjer("1", slackUserUid, separator)
+        case t if endM.exists(t.contains(_)) => selenium.jinjer("2", slackUserUid, separator)
         case e if e contains "help" => Some(
-          """登録: 自分のデータを登録します(botとDMでやってください) / 引数 <companyId> <uid> <pass>
+          s"""登録: 自分のデータを登録します(botとDMでやってください) / 引数 <companyId> <uid> <pass>
              　　　既にデータがあった場合、上書き処理をします
              確認: 自分のデータを確認します パスワード以外が表示されます
-             出社！: 登録しているデータで出社処理をします
-             退社！: 登録しているデータで退社処理をします
+             ${startM.mkString(",")}: 登録しているデータで出社処理をします
+             ${endM.mkString(",")}: 登録しているデータで退社処理をします
           """
         )
         case _ => None
