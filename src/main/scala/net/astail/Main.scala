@@ -28,7 +28,7 @@ object Main {
 
       logger.info(s"[getMessage] channel: ${channel}, text: ${text}, user: ${slackUserUid}")
       val startM = Seq("仕事開始！", "出勤！", "出社！", ":startwork:", "開店", "始業")
-      val endM = Seq("仕事終了！", "退勤！", "退社！", ":endwork:", "閉店", "終業", "終わり", "帰る")
+      val endM = Seq("仕事終了！", "退勤！", "退社！", ":endwork:", "閉店", "終業", "終わり", "帰る", ":end:")
 
       val sendMessage: Option[String] = text match {
         case e if e startsWith "登録" => Some(rdbData.subscribe(e, slackUserUid, separator))
